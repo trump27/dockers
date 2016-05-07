@@ -1,0 +1,66 @@
+datastore:
+  image: busybox
+  container_name: redmine-data
+  tty: true
+  volumes:
+    - /var/lib/postgresql
+    - /home/redmine/data
+
+postgresql:
+  image: sameersbn/postgresql:9.4-21
+  container_name: redmine-db
+  environment:
+    - DB_USER=redmine
+    - DB_PASS=password
+    - DB_NAME=redmine_production
+  volumes_from:
+    - datastore
+  # volumes:
+  #   - /srv/docker/redmine/postgresql:/var/lib/postgresql
+
+redmine:
+  image: sameersbn/redmine:3.2.1-6
+  container_name: redmine
+  links:
+    - postgresql:postgresql
+  environment:
+    - TZ=Asia/Tokyo
+
+    - REDMINE_PORT=3001
+    - REDMINE_HTTPS=false
+    - REDMINE_RELATIVE_URL_ROOT=
+    - REDMINE_SECRET_TOKEN=
+
+    - REDMINE_SUDO_MODE_ENABLED=false
+    - REDMINE_SUDO_MODE_TIMEOUT=15
+
+    - REDMINE_CONCURRENT_UPLOADS=2
+
+    - REDMINE_BACKUP_SCHEDULE=
+    - REDMINE_BACKUP_EXPIRY=
+    - REDMINE_BACKUP_TIME=
+
+    - SMTP_ENABLED=false
+    # - SMTP_METHOD=smtp
+    # - SMTP_DOMAIN=www.example.com
+    # - SMTP_HOST=smtp.gmail.com
+    # - SMTP_PORT=587
+    # - SMTP_USER=mailer@example.com
+    # - SMTP_PASS=password
+    # - SMTP_STARTTLS=true
+    # - SMTP_AUTHENTICATION=:login
+
+    - IMAP_ENABLED=false
+    # - IMAP_HOST=imap.gmail.com
+    # - IMAP_PORT=993
+    # - IMAP_USER=mailer@example.com
+    # - IMAP_PASS=password
+    # - IMAP_SSL=true
+    # - IMAP_INTERVAL=30
+
+  ports:
+    - "3001:80"
+  volumes_from:
+    - datastore
+  # volumes:
+  #   - /srv/docker/redmine/redmine:/home/redmine/data
