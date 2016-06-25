@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  gitbucket:
+    build: ./gitbucket
+    image: gitbucket:4.1
+    ports:
+      - "8080:8080"
+      - "29418:29418"
+    volumes:
+      - /opt/docker/gitbucket:/gitbucket
